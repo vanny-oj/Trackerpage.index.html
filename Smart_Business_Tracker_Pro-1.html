@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Smart Business Tracker Pro — Universal Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --navy: #0D1B3E;
+    --navy-mid: #152554;
+    --teal: #1A8C7A;
+    --teal-light: #22B5A0;
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --cream: #FAF7F0;
+    --text-light: #E8EAF0;
+    --text-muted: #8A9BB8;
+  }
+
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy);
+    color: var(--text-light);
+    overflow-x: hidden;
+  }
+
+  /* ── PRICE BADGE ── */
+  .price-badge {
+    display: flex; align-items: center; gap: 14px;
+    background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 50px; padding: 10px 24px;
+    flex-wrap: wrap; justify-content: center;
+  }
+  .price-was {
+    font-size: 14px; color: var(--text-muted);
+    text-decoration: line-through;
+  }
+  .price-now {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem; font-weight: 700; color: var(--gold);
+  }
+  .price-tag {
+    font-size: 10px; letter-spacing: 2px; font-weight: 600;
+    color: var(--teal-light); text-transform: uppercase;
+    border: 1px solid var(--teal-light); padding: 4px 10px; border-radius: 20px;
+  }
+
+  /* ── GRAIN OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.04;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative; min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 80px 24px 60px;
+    background: radial-gradient(ellipse 80% 60% at 50% 20%, #1A3570 0%, var(--navy) 70%);
+    overflow: hidden;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute; bottom: -2px; left: 0; right: 0; height: 120px;
+    background: linear-gradient(to bottom, transparent, var(--navy));
+    pointer-events: none;
+  }
+
+  /* Decorative circles */
+  .orb {
+    position: absolute; border-radius: 50%; pointer-events: none; opacity: 0.12;
+  }
+  .orb-1 { width: 600px; height: 600px; top: -200px; left: -200px;
+    background: radial-gradient(circle, var(--teal) 0%, transparent 70%); }
+  .orb-2 { width: 400px; height: 400px; bottom: -100px; right: -100px;
+    background: radial-gradient(circle, var(--gold) 0%, transparent 70%); }
+
+  /* Gold top bar */
+  .topbar {
+    position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--teal), var(--gold), var(--teal));
+  }
+
+  .badge {
+    display: inline-block;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-size: 11px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase;
+    padding: 6px 18px; border-radius: 40px; margin-bottom: 28px;
+    background: rgba(201,168,76,0.08);
+    animation: fadeDown 0.6s ease both;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    font-weight: 900; line-height: 1.1;
+    animation: fadeDown 0.7s 0.1s ease both;
+  }
+
+  .hero h1 .accent { color: var(--gold); font-style: italic; }
+  .hero h1 .teal   { color: var(--teal-light); }
+
+  .hero-sub {
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    color: var(--text-muted); font-weight: 300;
+    max-width: 600px; margin: 22px auto 0; line-height: 1.7;
+    animation: fadeDown 0.7s 0.2s ease both;
+  }
+
+  .target-pills {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    justify-content: center; margin-top: 36px;
+    animation: fadeDown 0.7s 0.3s ease both;
+  }
+
+  .pill {
+    background: rgba(26,140,122,0.15); border: 1px solid rgba(26,140,122,0.35);
+    color: var(--teal-light); font-size: 13px; font-weight: 500;
+    padding: 7px 16px; border-radius: 30px;
+  }
+
+  .cta-group {
+    display: flex; flex-wrap: wrap; gap: 16px;
+    justify-content: center; margin-top: 48px;
+    animation: fadeDown 0.7s 0.4s ease both;
+  }
+
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: linear-gradient(135deg, var(--gold), #A87930);
+    color: var(--navy); font-weight: 700; font-size: 16px;
+    padding: 16px 36px; border-radius: 8px;
+    text-decoration: none; letter-spacing: 0.3px;
+    box-shadow: 0 8px 32px rgba(201,168,76,0.35);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(201,168,76,0.5); }
+  .btn-primary svg { flex-shrink: 0; }
+
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 10px;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    color: var(--text-light); font-weight: 500; font-size: 15px;
+    padding: 15px 32px; border-radius: 8px;
+    text-decoration: none;
+    background: rgba(255,255,255,0.05);
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--teal-light); background: rgba(26,140,122,0.12); }
+
+  .scroll-hint {
+    margin-top: 64px; opacity: 0.4; font-size: 12px; letter-spacing: 1px;
+    text-transform: uppercase; animation: bounce 2s infinite;
+  }
+
+  /* ── STATS STRIP ── */
+  .stats {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 0;
+    background: var(--navy-mid); border-top: 1px solid rgba(255,255,255,0.07);
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .stat-item {
+    flex: 1; min-width: 180px; padding: 36px 24px; text-align: center;
+    border-right: 1px solid rgba(255,255,255,0.07);
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem; font-weight: 700; color: var(--gold);
+  }
+  .stat-label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+  /* ── SECTIONS ── */
+  section { padding: 100px 24px; max-width: 1100px; margin: 0 auto; }
+
+  .section-label {
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--teal-light); font-weight: 600; margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 700; line-height: 1.2;
+    color: #fff;
+  }
+  .section-title .gold { color: var(--gold); }
+
+  /* ── FEATURES ── */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px; margin-top: 56px;
+  }
+
+  .feat-card {
+    background: var(--navy-mid);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 16px; padding: 36px 32px;
+    position: relative; overflow: hidden;
+    transition: transform 0.25s, border-color 0.25s;
+  }
+  .feat-card:hover { transform: translateY(-4px); border-color: rgba(201,168,76,0.3); }
+  .feat-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--teal), var(--gold));
+    opacity: 0; transition: opacity 0.25s;
+  }
+  .feat-card:hover::before { opacity: 1; }
+
+  .feat-icon { font-size: 2.2rem; margin-bottom: 16px; }
+  .feat-title { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 10px; }
+  .feat-desc { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+
+  /* ── WHO IS IT FOR ── */
+  .who-wrap { background: radial-gradient(ellipse 70% 60% at 50% 50%, #152554 0%, var(--navy) 80%); }
+
+  .who-section { max-width: 1100px; }
+  .who-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px; margin-top: 56px;
+  }
+  .who-card {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 14px; padding: 28px 26px;
+    display: flex; align-items: flex-start; gap: 16px;
+    transition: background 0.25s;
+  }
+  .who-card:hover { background: rgba(201,168,76,0.07); }
+  .who-emoji { font-size: 2rem; flex-shrink: 0; }
+  .who-title { font-weight: 600; color: var(--gold-light); margin-bottom: 6px; }
+  .who-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+  /* ── SHEETS PREVIEW ── */
+  .sheets-row {
+    display: flex; flex-wrap: wrap; gap: 12px; margin-top: 48px;
+  }
+  .sheet-tag {
+    background: rgba(26,140,122,0.12); border: 1px solid rgba(34,181,160,0.3);
+    color: var(--teal-light); font-size: 14px; font-weight: 500;
+    padding: 10px 20px; border-radius: 8px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  /* ── CTA BANNER ── */
+  .cta-banner {
+    background: linear-gradient(135deg, #1A3570 0%, #0D2B2A 100%);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 24px; padding: 80px 48px;
+    text-align: center; position: relative; overflow: hidden;
+    max-width: 900px; margin: 0 auto 100px;
+  }
+  .cta-banner::before {
+    content: ''; position: absolute;
+    top: -60px; right: -60px; width: 300px; height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,168,76,0.15) 0%, transparent 70%);
+  }
+  .cta-banner::after {
+    content: ''; position: absolute;
+    bottom: -60px; left: -60px; width: 250px; height: 250px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(26,140,122,0.15) 0%, transparent 70%);
+  }
+  .cta-banner h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700;
+    color: #fff; line-height: 1.3; position: relative; z-index: 1;
+  }
+  .cta-banner p {
+    color: var(--text-muted); margin-top: 16px; font-size: 16px;
+    line-height: 1.7; position: relative; z-index: 1;
+  }
+  .cta-banner .cta-group { position: relative; z-index: 1; }
+
+  /* ── DIVIDER ── */
+  .gold-divider {
+    width: 80px; height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--teal));
+    border-radius: 3px; margin: 20px 0 0;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid rgba(255,255,255,0.07);
+    padding: 40px 24px; text-align: center;
+    color: var(--text-muted); font-size: 13px;
+  }
+  footer a { color: var(--teal-light); text-decoration: none; }
+  footer .footer-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem; color: var(--gold); margin-bottom: 12px; display: block;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(8px); }
+  }
+
+  /* Scroll reveal */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 640px) {
+    .cta-banner { padding: 52px 28px; }
+    .stat-item { padding: 28px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════ HERO ══════════════ -->
+<section class="hero">
+  <div class="topbar"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <div class="badge">📊 Universal Edition — Nigeria's #1 Business Tool</div>
+
+  <h1>
+    Run Your Business<br>
+    Like a <span class="accent">Pro.</span>
+    <span class="teal"> Track Everything.</span>
+  </h1>
+
+  <p class="hero-sub">
+    The Smart Business Tracker is a plug-and-play Excel spreadsheet built for
+    Nigerian small business owners — no accounting degree required.
+  </p>
+
+  <div class="target-pills" style="margin-top:28px;">
+    <span class="pill">🛒 Market Vendors</span>
+    <span class="pill">👗 Boutique Owners</span>
+    <span class="pill">🍔 Food Businesses</span>
+    <span class="pill">📱 Online Sellers</span>
+    <span class="pill">📦 Mini Importers</span>
+    <span class="pill">💼 Side Hustlers</span>
+  </div>
+
+  <div class="price-badge reveal" style="margin-top:36px;">
+    <span class="price-was">Value: ₦15,000</span>
+    <span class="price-now">₦5,000</span>
+    <span class="price-tag">ONE-TIME PAYMENT</span>
+  </div>
+
+  <div class="cta-group">
+    <a href="https://paystack.com/buy/smart-business-tracker-tndvgx" target="_blank" class="btn-primary">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+      </svg>
+      Buy Now — ₦5,000
+    </a>
+    <a href="#features" class="btn-secondary">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"/>
+      </svg>
+      See What's Inside
+    </a>
+  </div>
+
+  <p class="scroll-hint">↓ &nbsp; Scroll to explore</p>
+</section>
+
+<!-- ══════════════ STATS ══════════════ -->
+<div class="stats">
+  <div class="stat-item">
+    <div class="stat-num">6+</div>
+    <div class="stat-label">Business Categories Covered</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">7</div>
+    <div class="stat-label">Smart Sheets Included</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">₦0</div>
+    <div class="stat-label">Monthly Subscription Fee</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">100%</div>
+    <div class="stat-label">Auto-Calculated Dashboard</div>
+  </div>
+</div>
+
+<!-- ══════════════ FEATURES ══════════════ -->
+<section id="features">
+  <div class="reveal">
+    <p class="section-label">What You Get</p>
+    <h2 class="section-title">Everything Your Business<br>Needs in One <span class="gold">Spreadsheet</span></h2>
+    <div class="gold-divider"></div>
+  </div>
+
+  <div class="features-grid">
+    <div class="feat-card reveal">
+      <div class="feat-icon">📊</div>
+      <h3 class="feat-title">Live Business Dashboard</h3>
+      <p class="feat-desc">Auto-updates from your Sales, Inventory & Expenses — zero manual work needed. See today's sales, weekly & monthly totals at a glance in Naira (₦).</p>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-icon">🛒</div>
+      <h3 class="feat-title">Sales Tracker</h3>
+      <p class="feat-desc">Log every transaction with date, product, quantity, price, and profit. Instantly know which products are making you money.</p>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-icon">📦</div>
+      <h3 class="feat-title">Inventory Management</h3>
+      <p class="feat-desc">Track your stock levels, cost price, selling price, and profit margins. Never run out of your best sellers again.</p>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-icon">💸</div>
+      <h3 class="feat-title">Expense Logger</h3>
+      <p class="feat-desc">Record every business expense so you always know your real profit — not just your revenue. Separate business from personal money.</p>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-icon">👥</div>
+      <h3 class="feat-title">Customer Records</h3>
+      <p class="feat-desc">Keep track of your buyers, repeat customers, and order history. Build lasting customer relationships with organized data.</p>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-icon">📋</div>
+      <h3 class="feat-title">Setup Guide Included</h3>
+      <p class="feat-desc">No confusion, no guesswork. The built-in guide walks you through every sheet so you're up and running in minutes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ WHO IT'S FOR ══════════════ -->
+<div class="who-wrap">
+<section class="who-section">
+  <div class="reveal">
+    <p class="section-label">Perfect For</p>
+    <h2 class="section-title">Built for <span class="gold">Real Nigerian</span><br>Business Owners</h2>
+    <div class="gold-divider"></div>
+  </div>
+
+  <div class="who-grid">
+    <div class="who-card reveal">
+      <div class="who-emoji">🛒</div>
+      <div>
+        <p class="who-title">Market Vendors</p>
+        <p class="who-desc">Log daily cash sales and track profit even without a formal store or POS machine.</p>
+      </div>
+    </div>
+    <div class="who-card reveal">
+      <div class="who-emoji">👗</div>
+      <div>
+        <p class="who-title">Boutique Owners</p>
+        <p class="who-desc">Manage your clothing & accessories stock, pricing, and customer purchases in one place.</p>
+      </div>
+    </div>
+    <div class="who-card reveal">
+      <div class="who-emoji">🍔</div>
+      <div>
+        <p class="who-title">Food Businesses</p>
+        <p class="who-desc">Track ingredients, meals sold, daily expenses and see your real food business profit.</p>
+      </div>
+    </div>
+    <div class="who-card reveal">
+      <div class="who-emoji">📱</div>
+      <div>
+        <p class="who-title">Online Sellers</p>
+        <p class="who-desc">Handle orders, customer records, and social-media sales without losing track of anything.</p>
+      </div>
+    </div>
+    <div class="who-card reveal">
+      <div class="who-emoji">📦</div>
+      <div>
+        <p class="who-title">Mini Importers</p>
+        <p class="who-desc">Monitor stock levels, cost price, selling price, and profit margins across all your items.</p>
+      </div>
+    </div>
+    <div class="who-card reveal">
+      <div class="who-emoji">💼</div>
+      <div>
+        <p class="who-title">Side Hustlers</p>
+        <p class="who-desc">Keep your hustle money separate from personal expenses and know exactly what you're earning.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ══════════════ SHEETS INSIDE ══════════════ -->
+<section>
+  <div class="reveal">
+    <p class="section-label">Inside the File</p>
+    <h2 class="section-title">7 Powerful Sheets, <span class="gold">One Download</span></h2>
+    <div class="gold-divider"></div>
+    <p style="color:var(--text-muted); margin-top:20px; max-width:560px; line-height:1.7;">
+      Open the file and you'll find everything organized into clearly labelled sheets — all linked together automatically.
+    </p>
+  </div>
+
+  <div class="sheets-row reveal">
+    <div class="sheet-tag">📋 Setup &amp; Guide</div>
+    <div class="sheet-tag">📊 Dashboard</div>
+    <div class="sheet-tag">🛒 Sales</div>
+    <div class="sheet-tag">📦 Inventory</div>
+    <div class="sheet-tag">💸 Expenses</div>
+    <div class="sheet-tag">👥 Customers</div>
+    <div class="sheet-tag">📄 Licence</div>
+  </div>
+</section>
+
+<!-- ══════════════ CTA BANNER ══════════════ -->
+<div style="padding: 0 24px;">
+  <div class="cta-banner reveal">
+    <h2>Stop Losing Track of Your Money.<br>Start Running Your Business Smarter.</h2>
+    <p>Download the Smart Business Tracker Pro today — completely free, no sign-up needed.<br>Built with 💛 for Nigerian entrepreneurs.</p>
+    <div class="cta-group" style="margin-top:40px;">
+      <a href="https://paystack.com/buy/smart-business-tracker-tndvgx" target="_blank" class="btn-primary">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+        </svg>
+        Buy Now — ₦5,000
+      </a>
+    </div>
+    <p style="margin-top:20px; font-size:13px; color:var(--text-muted);">
+      💳 Secure payment via Paystack &nbsp;·&nbsp; 📩 Instant delivery &nbsp;·&nbsp; 🔒 Personal Use License
+    </p>
+  </div>
+</div>
+
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer>
+  <span class="footer-brand">Smart Business Tracker Pro</span>
+  <p>Created by <a href="https://www.instagram.com/vanny.oj" target="_blank">Patience Akpa</a> · AI Content Strategist &amp; Digital Product Creator · Nigeria</p>
+  <p style="margin-top:8px;">© 2025 Patience Akpa · All rights reserved · Personal use only</p>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+  reveals.forEach(el => io.observe(el));
+</script>
+</body>
+</html>
